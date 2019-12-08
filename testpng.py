@@ -5,7 +5,7 @@ import cv2
 import numpy as np
 from matplotlib import pyplot as plt
 
-img = cv2.imread("screen1.png", 0)
+img = cv2.imread("path-to-save.png", 0)
 # 背景
 img2 = img.copy()
 template = cv2.imread("kaishi.png", 0)
@@ -37,8 +37,8 @@ for meth in methods:
     # print max_val
     # print min_loc
     # print max_loc
-    print top_left
-    print bottom_right
+    print (top_left)
+    print (bottom_right)
     plt.subplot(221), plt.imshow(img2, cmap="gray")
     plt.title('Original Image'), plt.xticks([]), plt.yticks([])
     plt.subplot(222), plt.imshow(template, cmap="gray")
