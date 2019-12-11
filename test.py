@@ -24,8 +24,8 @@ def getCount():
     source =[r1, r2, r3, r4, r5]
     return len([i for i in source if i > 60])
 
-def judgeColor(x, y, r, g, b):
-    im = Image.open("screen.png")
+def judgeColor(x, y, r, g, b, screen = 'screen.png'):
+    im = Image.open(screen)
     pix = im.load()
     r1, g1, b1 = pix[x, y]
     if r1 == r and g1 == g and b1 == b:
@@ -37,7 +37,7 @@ lastClick = 'default'
 # 宝藏
 BZ = False
 
-# 起始， 终止
+# 起始， 终止 下面，用于黄星
 pickArr = [
     [263, 527, 500, 937],
     [554, 568, 782, 972],
@@ -46,8 +46,16 @@ pickArr = [
     [1425, 543, 1628, 942],
 ]
 
+# 起始终止，上面，用于计算定身
+pickArr2 =[
+    [486, 171, 559, 217],
+    [665, 173, 737, 216],
+    [877, 82, 942, 134],
+    [1110, 174, 1178, 217],
+    [1289, 172, 1353, 218],
+]
+
 def calcStar(coordinate, pix):
-    print(coordinate)
     area = 0
     for i in range(coordinate[0], coordinate[2]):
         for j in range(coordinate[1], coordinate[3]):
@@ -255,7 +263,8 @@ def shuaMoNv():
     sleep(2)
     mouse_click(1200, 950)
     sleep(4)
-    mouse_click(1400, 865)
+    # mouse_click(1400, 865)
+    mouse_click(1400, 660)
     sleep(4)
     flag = True
     monv_zero = False
@@ -293,6 +302,9 @@ def shuaMoNv():
         for item in posNameListnv:
             pos = matchImg('./screen.png', './' + item +'.png', 0.7, item)
             if pos and float(pos['confidence']) > 0.97:
+                if item == 'chuang':
+                    resultPos = pos
+                    break
                 resultPos = pos if float(pos['confidence'] > float(resultPos['confidence'])) else resultPos
             elif pos and float(pos['confidence']) > float(resultPos['confidence']):
                 resultPos = pos
@@ -303,10 +315,14 @@ def shuaMoNv():
         zhandou(resultPos, j)
     shuaMoJie(monv_zero)
 
-mojiebaji = False
+mojiebaji = True
+# mojiebaji = False
 # 魔界
 def shuaMoJie(monv_zero = False):
     global mojiebaji
+    global BZ
+    if '18:22:15.1' > str(datetime.datetime.now().time()) > '18:16:15.1':
+        BZ = False
     print('进入刷魔界')
     sleep(2)
     mouse_click(1818, 990)
@@ -334,41 +350,47 @@ def shuaMoJie(monv_zero = False):
                 else: # <4
                     resultPos = pos if int(pos['result'][0]) > int(resultPos['result'][0]) else resultPos
             elif pos and float(pos['confidence']) > float(resultPos['confidence']):
-                resultPos = pos
+                if posNameList.index(item) < 4 and 'result' in resultPos:
+                    resultPos = pos if int(pos['result'][0]) > int(resultPos['result'][0]) else resultPos
+                else:
+                    resultPos = pos
         print('resultPos:' + str(resultPos))
         if resultPos and 'mark' in resultPos and resultPos['mark'] == 'shangji':
             for l in range(4):
                 mouse_click(300, 180)
                 print('过场动画')
-                sleep(4)
-            if not judgeColor(1700, 400, 41, 28, 32):
+                sleep(3)
+            myCaputrue('screen_mojie.png')
+            if not judgeColor(1700, 400, 41, 28, 32, 'screen_mojie.png') and judgeColor(600, 318, 131, 108, 142, 'screen_mojie.png'):
                 # 进入秘境了
                 print('进入秘境')
-                # sleep(1)
-                # mouse_click(323, 574)
-                # sleep(5)
-                # mouse_click(1508, 985)
-                # mouse_drop(995, 650, 995, 360)
-                # sleep(1)
-                # mouse_click(1200, 900)  # 五次霸级
-                # sleep(1)
-                # mouse_click(1300, 450)
-                # sleep(0.6)
-                # mouse_click(1200, 628)
-                qq_message_chuang(515, 1057, '魔界秘境！@mlegin')
+                sleep(1)
+                mouse_click(323, 574)
+                sleep(5)
+                mouse_click(1508, 985)
+                mouse_drop(995, 650, 995, 492)
+                sleep(1)
+                mouse_click(1200, 900)  # 五次霸级
+                sleep(1)
+                mouse_click(1300, 450)
+                sleep(0.6)
+                mouse_click(1200, 628)
+                qq_message_chuang(569, 1057, '魔界秘境！@mlegin')
                 mojiebaji = True  # 从while跳出，进入魔女，并且一直不进魔界了
                 print('jieshu')
                 sleep(4)
                 continue
-            # if '12:10:15.1' > str(datetime.datetime.now().time()) > '11:55:15.1' and not BZ:
-            #     flag = False
-            #     shuaBaoZang()
-            #     break
-            # elif '20:30:15.1' > str(datetime.datetime.now().time()) > '20:20:15.1' and not BZ:
-            #     flag = False
-            #     shuaBaoZang()
-            #     break
-            if getCount() < 1:
+            if '10:15:15.1' > str(datetime.datetime.now().time()) > '10:05:15.1' and not BZ:
+                flag = False
+                BZ = True
+                shuaBaoZang()
+                break
+            elif '18:30:15.1' > str(datetime.datetime.now().time()) > '18:23:15.1' and not BZ:
+                flag = False
+                BZ = True
+                shuaBaoZang()
+                break
+            if getCount() < 1:  # 只打5个魔界
                 flag = False
                 break
         zhandou(resultPos, j)
@@ -381,11 +403,13 @@ def shuaMoJie(monv_zero = False):
 
 def kaiBaoZang():
     mouse_click(1217, 935)
-    sleep(3)
+    sleep(6)
+    mouse_click(955, 669)
+    sleep(6)
     mouse_click(1443, 927)
-    sleep(3)
+    sleep(6)
     mouse_click(1219, 906)
-    sleep(3)
+    sleep(6)
     mouse_click(955, 669)
     sleep(3)
     # myCaputrue()
@@ -405,15 +429,15 @@ def shuaBaoZang():
     mouse_click(1215, 697)  # 点击叹号
     sleep(2)
     mouse_click(1385, 980)
-    sleep(6)
+    sleep(12)
     for i in range(5):
         kaiBaoZang()
         sleep(4)
         mouse_click(1544, 77)
         sleep(4)
-    sleep(3)
+    sleep(5)
     #  选宝藏
-    for i in range(6):
+    for i in range(4):
         mouse_click(462, 205)
         sleep(0.3)
         mouse_drop(996, 965, 996, 340)
@@ -423,13 +447,13 @@ def shuaBaoZang():
         mouse_click(1540, 540)
         sleep(1)
         mouse_click(1167, 672)  # 点击是
-        sleep(0.3)
+        sleep(3)
         mouse_click(1544, 77)
         sleep(4)
     shuaMoNv()
 
 # 颜色识别出数组opencv
-def screenToArr(low, high, targetPng, cPixCount):
+def screenToArr(low, high, targetPng, cPixCount, pickAr):
     countStar = [0, 0, 0, 0, 0]
     img_original = cv2.imread('screen.png')
     # 转变为HSV颜色空间
@@ -444,46 +468,69 @@ def screenToArr(low, high, targetPng, cPixCount):
     position_temp = None
     # 循环查找星星
     for i in range(5):
-        cPix = calcStar(pickArr[i], pix)
+        cPix = calcStar(pickAr[i], pix)
         if cPix > cPixCount:
             position_temp = {
                 'confidence': 0.999,
-                'result': (pickArr[i][0] + 100, pickArr[i][1] + 150),
+                'result': (pickAr[i][0] + 100, pickAr[i][1] + 150),
                 'mark': 'huangxing'
             } #budui
         countStar[i] += cPix
-        print(cPix)
     result = {'countStar': countStar, 'position_temp': position_temp}
     return result
 
 def zhandouPick():
     print('111 '+ str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S %f')))
     acc = 1
-    for k in range(acc): # 控制精度
+    for k in range(2): # 控制精度
         print('333 ' + str(k) + str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S %f')))
         if k == 0:
             myCaputrue('screen.png')
         # 黄色星星
-        result = screenToArr((60, 200, 215), (140, 255, 255), 'whitePix.png', 2000)
+        result = screenToArr((60, 200, 215), (140, 255, 255), 'whitePix.png', 2000, pickArr)
         count_star = result['countStar']
         position_temp = result['position_temp']
         print('ww' + str(count_star))
         print(np.array(count_star)/acc)
 
-        # result = screenToArr((151, 240, 110), (159, 248, 118), 'greenPix.png', 15)
+        # result = screenToArr((151, 240, 110), (159, 248, 118), 'greenPix.png', 15, pickArr)
         # count_star = result['countStar']
         # position_temp = result['position_temp']
         # print('gg' + str(count_star))
         # print(np.array(count_star) / acc)
-        #
-        # result = screenToArr((176, 36, 152), (185, 44, 160), 'purplePix.png', 15)
+        # #
+        # result = screenToArr((176, 36, 152), (185, 44, 160), 'purplePix.png', 15, pickArr)
         # count_star = result['countStar']
         # position_temp = result['position_temp']
         # print('ss' + str(count_star))
         # print(np.array(count_star) / acc)
+        #
+        # result = screenToArr((155, 102, 29), (164, 110, 37), 'blue.png', 15, pickArr)
+        # count_star = result['countStar']
+        # position_temp = result['position_temp']
+        # print('bb' + str(count_star))
+        # print(np.array(count_star) / acc)
+        #
+        # result = screenToArr((45, 1, 240), (190, 100, 255), 'dingshen.png', 15, pickArr2)
+        # count_star = result['countStar']
+        # position_temp = result['position_temp']
+        # print('dd' + str(count_star))
+        # print(np.array(count_star) / acc)
+        #
+        # result = screenToArr((0, 0, 170), (5, 5, 200), 'kejuebao.png', 15, pickArr)
+        # count_star = result['countStar']
+        # position_temp = result['position_temp']
+        # print('kk' + str(count_star))
+        # print(np.array(count_star) / acc)
     print('222 ' + str(datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S %f')))
     return position_temp
+
+def zhandou_baji():
+    print(1)
+
 findhwnd()
+# sleep(5)
+# zhandouPick()
 # shuaBaoZang()
 shuaMoNv()
 # shuaMoJie()
