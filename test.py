@@ -12,6 +12,8 @@ import cv2
 import numpy as np
 import pyautogui
 import pyperclip
+from pandas import DataFrame
+import pandas as pd
 
 def getCount():
     im = Image.open("screen.png")
@@ -315,8 +317,8 @@ def shuaMoNv():
         zhandou(resultPos, j)
     shuaMoJie(monv_zero)
 
-mojiebaji = True
-# mojiebaji = False
+# mojiebaji = True
+mojiebaji = False
 # 魔界
 def shuaMoJie(monv_zero = False):
     global mojiebaji
@@ -364,7 +366,9 @@ def shuaMoJie(monv_zero = False):
             if not judgeColor(1700, 400, 41, 28, 32, 'screen_mojie.png') and judgeColor(600, 318, 131, 108, 142, 'screen_mojie.png'):
                 # 进入秘境了
                 print('进入秘境')
-                sleep(1)
+                sleep(4)
+                qq_message_chuang(569, 1057, '魔界秘境！@mlegin')
+                sleep(4)
                 mouse_click(323, 574)
                 sleep(5)
                 mouse_click(1508, 985)
@@ -375,17 +379,16 @@ def shuaMoJie(monv_zero = False):
                 mouse_click(1300, 450)
                 sleep(0.6)
                 mouse_click(1200, 628)
-                qq_message_chuang(569, 1057, '魔界秘境！@mlegin')
                 mojiebaji = True  # 从while跳出，进入魔女，并且一直不进魔界了
                 print('jieshu')
-                sleep(4)
+                sleep(10)
                 continue
-            if '10:15:15.1' > str(datetime.datetime.now().time()) > '10:05:15.1' and not BZ:
+            if '11:15:15.1' > str(datetime.datetime.now().time()) > '10:05:15.1' and not BZ:
                 flag = False
                 BZ = True
                 shuaBaoZang()
                 break
-            elif '18:30:15.1' > str(datetime.datetime.now().time()) > '18:23:15.1' and not BZ:
+            if '19:30:15.1' > str(datetime.datetime.now().time()) > '18:23:15.1' and not BZ:
                 flag = False
                 BZ = True
                 shuaBaoZang()
@@ -535,3 +538,16 @@ findhwnd()
 shuaMoNv()
 # shuaMoJie()
 
+# now = datetime.datetime.now()
+# tt = now + datetime.timedelta(hours= 2, minutes= 30)
+# print(tt.strftime('%Y-%m-%d %H:%M:%S %f'))
+#
+#
+# def csv_deal(name = 'caibao'):
+#     data = {"name": ['caibao', 'ziyuan'], "time": [datetime.datetime.now(), datetime.datetime.now()], "jiange": [9, 3]}
+#     f1 = DataFrame(data, columns=['name', 'time', 'jiange'])
+#     print(f1)
+#     df = pd.DataFrame(data)
+#     df.to_csv('pandas.csv', header=False, index=False)
+#
+# csv_deal()
